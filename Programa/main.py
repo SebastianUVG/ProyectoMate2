@@ -1,33 +1,40 @@
 import numpy as np
-
+import random
 #---------Generar primos---------
+import random
+
 def criba(n):
+    
     not_primes = set()
     primes = []
-
-    for i in range(2,int(n)):
-        if i in not_primes:
-            continue
-        
-        for j in range(i*2,n,i):
-            not_primes.add(j)
-        primes.append(i)
+    
+    for i in range(2, n+1):
+        if i not in not_primes:
+            primes.append(i)
+            for j in range(i * i, n + 1, i):  
+                not_primes.add(j)
+    
     return primes
 
-
-def generar_primo(Rinf,Rsup):
-    for n in range(Rinf, Rsup):
-        #print(n)
-        prime_list = criba(int(n**0.5))
-        bandera = True  
+def generar_primo(Rinf, Rsup):
+    primos_encontrados = []
+    for n in range(Rinf, Rsup+1):
+        prime_list = criba(int(n**0.5))  
+        es_primo = True  
         for i in prime_list:
             if n % i == 0:
-                bandera = False
-        if bandera:
-           
-            return n
-    return None 
+                es_primo = False
+                break
+        if es_primo:
+            primos_encontrados.append(n)  
 
+    #
+    if primos_encontrados:
+        if len(primos_encontrados) > 1:
+            return random.choice(primos_encontrados)
+        else:
+            return None
+    return None  
 
 #-----------------------------------------MCD-------------------------------------------------------------
 Qz = []  # Lista donde se almacenarán los cocientes
@@ -88,11 +95,26 @@ def bezout_e_inverso_modular(e, n):
             return resultado_inverso
         
 
+def generar_llaves(rango_inf,rango_sup):
+    p = generar_primo(rango_inf,rango_sup)
+    q = generar_primo(rango_inf,rango_sup)
 
+    while p is not None and q is not None and q == p:
+        q = generar_primo(rango_inf, rango_sup)
 
+    # Si alguno es None, devolvemos None
+    if p is None or q is None:
+        return None
+    
 
+    print(f"p = {p}")
+    print(f"q = {q}")
+    
+    n = p * q
+    
 #print(mcd(0,50))
 #print(generar_primo(90,95))
 #bezout(27,14)
 #inverso_modular(10,100)
-print(bezout_e_inverso_modular(7,40))
+#print(bezout_e_inverso_modular(7,40))
+print(generar_llaves(89,97))
