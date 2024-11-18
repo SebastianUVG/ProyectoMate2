@@ -42,8 +42,6 @@ matrices = []
 def mcd(a,b):
     if b > a:
         a, b = b, a
-    a1 = a
-    b1 = b
     if b == 0:
         #print(f"El mcd de {a1} y {b1} es : {a}")
         return a
@@ -58,32 +56,31 @@ def mcd(a,b):
         a = b
         b = x
     #print(f"El mcd de {a1} y {b1} es : {a}")
-    return a,a1,b1
+    return a
 
 
 
 
 def bezout_e_inverso_modular(e, n):
     variable = mcd(e, n)
-    mcm = variable[0]
-    
+    mcm = variable
     if mcm != 1:
-        #print(f"El MCD de {a1} y {b1} debe ser igual a 1 para calcular el inverso modular.")
+       # print(f"El MCD de {e} y {n} debe ser igual a 1 para calcular el inverso modular.")
         return None
     else:
         for i in range(len(Qz)):
             matriz = np.array([[Qz[i], 1], [1, 0]])
             matrices.append(matriz)  
-            #print(f"Matriz {i}:\n{matriz}")
+            print(f"Matriz {i}:\n{matriz}")
 
         if len(matrices) > 0:
             resultado = matrices[0]
             for i in range(1, len(matrices)):
                 resultado = np.dot(resultado, matrices[i])  
-            #print(f"Resultado final de multiplicar todas las matrices:\n{resultado}")
+            print(f"Resultado final de multiplicar todas las matrices:\n{resultado}")
             exponente = (-1)**(len(Qz))
             x1 = exponente * -(resultado[0, 1])
-            #y1 = exponente * (resultado[1, 1])
+            y1 = exponente * (resultado[1, 1])
 
            # print(f"{mcm} = {b1} ({x1}) + {a1} ({y1})") 
     
@@ -96,6 +93,7 @@ def bezout_e_inverso_modular(e, n):
         
 
 def generar_llaves(rango_inf,rango_sup):
+    #Tomar 2 numeros primos
     p = generar_primo(rango_inf,rango_sup)
     q = generar_primo(rango_inf,rango_sup)
 
@@ -107,14 +105,31 @@ def generar_llaves(rango_inf,rango_sup):
         return None
     
 
-    print(f"p = {p}")
-    print(f"q = {q}")
+    #print(f"p = {p}")
+    #print(f"q = {q}")
     
+    #calcular n
     n = p * q
+
+    #Calcular phi
+    phi = (p - 1) * (q - 1)
+
+    # Calcular e 1 < e < λ ( n ) y mcd ( e , λ ( n )) = 1
+ 
+
+    # Paso 4: Calcular d (inverso modular de e mod phi_n)
+
+    # Paso 5: Verificar que e y d sean distintos
+
+    # Paso 6: Devolver las claves pública y privada
+
+
+
+    #CAlcular el inverso 
     
-#print(mcd(0,50))
+#print(mcd(3628,4756))
 #print(generar_primo(90,95))
 #bezout(27,14)
 #inverso_modular(10,100)
-#print(bezout_e_inverso_modular(7,40))
-print(generar_llaves(89,97))
+print(bezout_e_inverso_modular(7,40))
+#(generar_llaves(10,100))
