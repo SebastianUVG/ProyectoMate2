@@ -124,7 +124,8 @@ def generar_llaves(rango_inf,rango_sup):
         #Calcular phi
         phi = (p - 1) * (q - 1)
         #print(phi)
-
+        if phi <= 0:
+            return None
         # Calcular e 1 < e < λ ( n ) y mcd ( e , λ ( n )) = 1
         
         e = random.randint(2, phi)
@@ -137,7 +138,7 @@ def generar_llaves(rango_inf,rango_sup):
         #Calcular d
         d = bezout_e_inverso_modular(e, phi)
         if d is None:
-            continue
+            return None
 
         # Verificar que e y d sean diferentes
         if e != d:
@@ -148,20 +149,33 @@ def generar_llaves(rango_inf,rango_sup):
         return None
     
 
-def encriptar(caracter, publica):
-    # C = m^e modulo n
 
-    if caracter < publica[0] and caracter > 0:
-        C = (caracter**publica[0]) % publica[1]
+
+def encriptar(caracter, publica):
+    # Asegurar que los valores sean enteros nativos de Python
+    caracter = int(caracter)
+    publica = (int(publica[0]), int(publica[1]))
+    
+    if 0 < caracter < publica[1]:
+        C = pow(caracter, publica[0], publica[1])  # Exponenciación modular
         return C
     else:
         return None
 
 
- #c=me modulo n, donde m es el texto en claro, c es el texto cifrado y (e, n) es la clave pública del destinatario.
+def descencriptar(m, private):
+    # Asegurar que los valores sean enteros nativos de Python
+    m = int(m)
+    private = (int(private[0]), int(private[1]))
+    
+    if 0 < m < private[1]:
+        M = pow(m, private[0], private[1])  # Exponenciación modular
+        return M
+    else:
+        return None
 
-def descencriptar(c, private):
-    pass
+
+
 
 #print(mcd(11,3))
 #print(mcd(3,11))
@@ -175,7 +189,7 @@ def descencriptar(c, private):
 
 #print(generar_primo(90,96))
 
-
+#print(descencriptar(65,[2753,3233]))
 
 
 while True:
@@ -204,3 +218,18 @@ while True:
             print("Texto encriptado:", encriptado)
         else:
             print("No se pudo encriptar el texto.")
+
+    elif opcion == 3:
+        print("\n")
+        print("La llave privada es:", llave_privada)
+        texto = int(input("Ingrese el texto a desencriptar: "))
+        print(f"Ingrese la llave privada: {llave_privada[0]}")
+        desencriptado = descencriptar(texto, llave_privada)
+        if desencriptado is not None:
+            print("Texto descencriptado:", desencriptado)
+        else:
+            print("No se pudo desencriptar el texto.")
+
+    elif opcion== 4:
+        print("Saliendo...")
+        break
