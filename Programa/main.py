@@ -1,7 +1,6 @@
 import numpy as np
 import random
 #---------Generar primos---------
-import random
 
 def criba(n):
     not_primes = set()  
