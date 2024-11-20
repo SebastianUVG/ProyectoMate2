@@ -7,7 +7,6 @@ def criba(n):
     
     not_primes = set()
     primes = []
-    
     for i in range(2, n+1):
         if i not in not_primes:
             primes.append(i)
@@ -16,47 +15,51 @@ def criba(n):
     
     return primes
 
-def generar_primo(Rinf, Rsup):
-    primos_encontrados = []
-    for n in range(Rinf, Rsup+1):
-        prime_list = criba(int(n**0.5))  
-        es_primo = True  
-        for i in prime_list:
-            if n % i == 0:
-                es_primo = False
-                break
-        if es_primo:
-            primos_encontrados.append(n)  
 
-    #
-    if primos_encontrados:
-        if len(primos_encontrados) > 1:
-            return random.choice(primos_encontrados)
-        else:
-            return None
-    return None  
+
+def generar_primo(Rinf, Rsup):
+    
+    if Rinf < 0 or Rsup == Rinf or Rsup < 0 or Rsup < Rinf:
+        return None
+    else:
+        primos_encontrados = []
+        for n in range(Rinf, Rsup+1):
+            prime_list = criba(int(n**0.5))  
+            es_primo = True  
+            for i in prime_list:
+                if n % i == 0:
+                    es_primo = False
+                    break
+            if es_primo:
+                primos_encontrados.append(n)  
+
+        #
+        if primos_encontrados:
+            if len(primos_encontrados) > 1:
+                return random.choice(primos_encontrados)
+            else:
+                return None
+        return None  
+
 
 #-----------------------------------------MCD-------------------------------------------------------------
- # Lista donde se almacenarán los cocientes
 
 def mcd(a,b):
     Qz = [] 
     if b > a:
         a, b = b, a
     if b == 0:
-        #print(f"El mcd de {a1} y {b1} es : {a}")
+       
         return a
     while b != 0:
         r = a // b
         x = a % b
-        #print(r)
+     
         Qz.append(r)
-        #print(f"{a} = {r} * {b} + {x}")
-        #mcd = b
+     
         a = b
         b = x
-    #print(f"El mcd de {a1} y {b1} es : {a}")
-    #print(Qz)
+   
     return a,Qz
 
 
@@ -66,93 +69,84 @@ def mcd(a,b):
 def bezout_e_inverso_modular(e, n):
     mcm,Qz = mcd(e, n)
     if mcm != 1:
-       # print(f"El MCD de {e} y {n} debe ser igual a 1 para calcular el inverso modular.")
+       
         return None
     else:
         matrices = [] 
         for i in range(len(Qz)):
             matriz = np.array([[Qz[i], 1], [1, 0]])
             matrices.append(matriz)  
-            #print(f"Matriz {i}:\n{matriz}")
+    
 
         if len(matrices) > 0:
             resultado = matrices[0]
             for i in range(1, len(matrices)):
                 resultado = np.dot(resultado, matrices[i])  
-            #print(f"Resultado final de multiplicar todas las matrices:\n{resultado}")
+      
             exponente = (-1)**(len(Qz))
             x1 = exponente * -(resultado[0, 1])
             y1 = exponente * (resultado[1, 1])
 
-           # print(f"{mcm} = {b1} ({x1}) + {a1} ({y1})") 
+    
     
             resultado_inverso = x1
             while resultado_inverso < 0:
                 resultado_inverso += n
 
-            #print(f"El inverso modular de {e} y {n} es {resultado_inverso}\nya que {e} * {resultado_inverso} = 1 mod {n}")
             return resultado_inverso
         
-llave_publica = None
-llave_privada = None
+
+def generar_llaves(rango_inf, rango_sup):
+    # Tomar 2 números primos
+    p = generar_primo(rango_inf, rango_sup)
+    q = generar_primo(rango_inf, rango_sup)
 
 
-def generar_llaves(rango_inf,rango_sup):
-    while True:
-    #Tomar 2 numeros primos
-        global llave_publica, llave_privada
-        p = generar_primo(rango_inf,rango_sup)
-        q = generar_primo(rango_inf,rango_sup)
+    while p is not None and q is not None and q == p:
+        q = generar_primo(rango_inf, rango_sup)
 
-        # p = 5939
-        # q = 9277
+    # Si alguno es None, devolvemos None
+    if p is None or q is None:
+        return None
+    
+    # Calcular n módulo
+    n = p * q
 
-        while p is not None and q is not None and q == p:
-            q = generar_primo(rango_inf, rango_sup)
+    # Calcular phi
+    phi = (p - 1) * (q - 1)
+    if phi <= 0:
+        return None
 
-        # Si alguno es None, devolvemos None
-        if p is None or q is None:
-            return None
-        
+    # Calcular e tal que 1 < e < phi y mcd(e, phi) = 1
+    if phi == 2:
+        return None
+    e = random.randint(2, phi)
+    while mcd(e, phi)[0] != 1:
+        e = random.randint(2, phi)
+    
+    # Calcular d
+    d = bezout_e_inverso_modular(e, phi)
+    if d is None:
+        return None
 
-        #print(f"p = {p}")
-        #print(f"q = {q}")
-        
-        #calcular n modulo
-        n = p * q
-
-        #Calcular phi
-        phi = (p - 1) * (q - 1)
-        #print(phi)
-        if phi <= 0:
-            return None
-        # Calcular e 1 < e < λ ( n ) y mcd ( e , λ ( n )) = 1
-        
+    # Verificar que e y d sean diferentes
+    while e == d:
         e = random.randint(2, phi)
         while mcd(e, phi)[0] != 1:
             e = random.randint(2, phi)
-
-        #e =   30612487
-        #phi = 55080888
-
-        #Calcular d
         d = bezout_e_inverso_modular(e, phi)
         if d is None:
             return None
 
-        # Verificar que e y d sean diferentes
-        if e != d:
-            llave_publica = (e, n)
-            llave_privada = (d, n)
-            return llave_publica, llave_privada
-        #print(d)
-        return None
-    
+    # Asignar las llaves pública y privada
+    llave_publica = (e, n)
+    llave_privada = (d, n)
+
+    return llave_publica, llave_privada
 
 
 
 def encriptar(caracter, publica):
-    # Asegurar que los valores sean enteros nativos de Python
     caracter = int(caracter)
     publica = (int(publica[0]), int(publica[1]))
     
@@ -164,7 +158,6 @@ def encriptar(caracter, publica):
 
 
 def descencriptar(m, private):
-    # Asegurar que los valores sean enteros nativos de Python
     m = int(m)
     private = (int(private[0]), int(private[1]))
     
@@ -175,30 +168,18 @@ def descencriptar(m, private):
         return None
 
 
-
-
-#print(mcd(11,3))
-#print(mcd(3,11))
-#print(generar_primo(90,95))
-#bezout(27,14)
-#inverso_modular(10,100)
-#print(bezout_e_inverso_modular(30612487,55080888))
-#print(bezout_e_inverso_modular(3,11))
-
-#print(generar_llaves(1000,10000))
-
-#print(generar_primo(90,96))
-
-#print(descencriptar(65,[2753,3233]))
-
-
+llaves = None
 while True:
+    
     opcion = int(input("1. Generar llaves\n2. Encriptar\n3. Desencriptar\n4. Salir\nOpcion: "))
     if opcion == 1:
         rango_inf = int(input("Ingrese el rango inferior: "))
         rango_sup = int(input("Ingrese el rango superior: "))
-
-        if generar_llaves(rango_inf, rango_sup) is not None:
+        llaves = generar_llaves(rango_inf, rango_sup)
+        
+        if llaves is not None:
+            llave_publica = llaves[0]
+            llave_privada = llaves[1]
             print("Llaves generadas:")
             print("Llave publica:", llave_publica)
             print("Llave privada:", llave_privada)
@@ -208,27 +189,33 @@ while True:
 
 
     elif opcion == 2:
-        print("\n")
-        print("La llave publica es:", llave_publica)
-        texto = int(input("Ingrese el texto a encriptar: "))
-        print(f"Ingrese la llave publica: {llave_publica[0]}")
-        encriptado = encriptar(texto, llave_publica)
-
-        if encriptado is not None:
-            print("Texto encriptado:", encriptado)
+        if llaves is None:
+            print("Tiene que generar las llaves antes de acceder a la encriptacion.")
         else:
-            print("No se pudo encriptar el texto.")
+            print("\n")
+            print("La llave publica es:", llave_publica)
+            texto = int(input("Ingrese el texto a encriptar: "))
+            print(f"Ingrese la llave publica: {llave_publica[0]}")
+            encriptado = encriptar(texto, llave_publica)
+
+            if encriptado is not None:
+                print("Texto encriptado:", encriptado)
+            else:
+                print("No se pudo encriptar el texto.")
 
     elif opcion == 3:
-        print("\n")
-        print("La llave privada es:", llave_privada)
-        texto = int(input("Ingrese el texto a desencriptar: "))
-        print(f"Ingrese la llave privada: {llave_privada[0]}")
-        desencriptado = descencriptar(texto, llave_privada)
-        if desencriptado is not None:
-            print("Texto descencriptado:", desencriptado)
+        if llaves is None:
+            print("Tiene que generar las llaves antes de acceder a la desencriptacion.")
         else:
-            print("No se pudo desencriptar el texto.")
+            print("\n")
+            print("La llave privada es:", llave_privada)
+            texto = int(input("Ingrese el texto a desencriptar: "))
+            print(f"Ingrese la llave privada: {llave_privada[0]}")
+            desencriptado = descencriptar(texto, llave_privada)
+            if desencriptado is not None:
+                print("Texto descencriptado:", desencriptado)
+            else:
+                print("No se pudo desencriptar el texto.")
 
     elif opcion== 4:
         print("Saliendo...")
