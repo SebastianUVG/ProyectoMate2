@@ -79,10 +79,10 @@ def bezout_e_inverso_modular(e, n):
         if len(matrices) > 0:
             resultado = matrices[0]
             for i in range(1, len(matrices)):
-                resultado = np.dot(resultado, matrices[i])  
+                resultado = np.dot(resultado, matrices[i])  # Multiplicamos las matrices
       
             exponente = (-1)**(len(Qz))
-            x1 = exponente * -(resultado[0, 1])
+            x1 = exponente * -(resultado[0, 1]) #Sacamos los valores de x y y de las ecuaciones diofanticas.
             y1 = exponente * (resultado[1, 1])
 
     
