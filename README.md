@@ -1,4 +1,4 @@
 # ProyectoMate2
  Proyecto Final de matematicas discretas
-#Autor
+# Autor
  Sebastian Garcia 22291
