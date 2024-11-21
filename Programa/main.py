@@ -1,3 +1,7 @@
+#Programa realizado por Sebastian Garica Bustamante
+#11/20/2024
+#Programa del algoritmo RSA en Python
+#Elaborado para el proyecto 2 de mate discreta
 import numpy as np
 import random
 #---------Generar primos---------
